@@ -243,7 +243,9 @@ class Application:
                 print("...done")
 
     def run(self):
-        require_univocal_windows_location(user_selected_location=self._opts_win_mount_point())
+        require_univocal_windows_location(
+            user_selected_location=self._opts_win_mount_point()
+        )
 
         if self.opts.list_win_mounts:
             self.list_win_mounts()
@@ -290,7 +292,9 @@ def parse_argv():
 
     opts_dict = vars(opts)
 
-    required_specified = [name for name in blank_states.keys() if opts_dict[name] != blank_states[name]]
+    required_specified = [
+        name for name in blank_states.keys() if opts_dict[name] != blank_states[name]
+    ]
 
     if len(required_specified) == 0:
         parser.error("missing required argument")
@@ -307,7 +311,9 @@ def parse_argv():
     is_backup_concern = opts.no_backup is True or opt_backup is not None
 
     if is_backup_concern and not is_sync:
-        parser.error("--backup/--no-backup options makes sense only with --sync/--sync-all options")
+        parser.error(
+            "--backup/--no-backup options makes sense only with --sync/--sync-all options"
+        )
 
     if is_sync and not is_backup_concern:
         msg = f"""Neither backup option given!\n
