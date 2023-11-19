@@ -63,11 +63,15 @@ class BtSyncManager:
         # fmt: on
 
         for device in linux_devices:
+            if not device:
+                continue
             if device.mac not in index:
                 index[device.mac] = []
             index[device.mac].append(device)
 
-        problem_devices_macs = [mac for mac, devices in index.items() if len(devices) > 1]
+        problem_devices_macs = [
+            mac for mac, devices in index.items() if len(devices) > 1
+        ]
 
         if len(problem_devices_macs) > 0:
             # fmt: off
@@ -82,7 +86,9 @@ class BtSyncManager:
                 index[device.mac] = []
             index[device.mac].append(device)
 
-        problem_devices_macs = [mac for mac, devices in index.items() if len(devices) > 2]
+        problem_devices_macs = [
+            mac for mac, devices in index.items() if len(devices) > 2
+        ]
 
         if len(problem_devices_macs) > 0:
             # fmt: off
@@ -97,7 +103,9 @@ class BtSyncManager:
 
     def _get_reg_adapter_section_key(self, device):
         return (
-            r"ControlSet001\Services\BTHPORT\Parameters\Keys" + "\\" + mac_to_reg_key(device.adapter_mac)
+            r"ControlSet001\Services\BTHPORT\Parameters\Keys"
+            + "\\"
+            + mac_to_reg_key(device.adapter_mac)
         )
 
     def devices_both_synced(self):
@@ -110,7 +118,9 @@ class BtSyncManager:
 
         index = self._index_devices()
 
-        common_devices_macs = [mac for mac, devices in index.items() if len(devices) == 2]
+        common_devices_macs = [
+            mac for mac, devices in index.items() if len(devices) == 2
+        ]
         synced_devices = [
             index[mac][0]
             for mac in common_devices_macs
@@ -128,7 +138,9 @@ class BtSyncManager:
         """
         index = self._index_devices()
 
-        common_devices_macs = [mac for mac, devices in index.items() if len(devices) == 2]
+        common_devices_macs = [
+            mac for mac, devices in index.items() if len(devices) == 2
+        ]
         needs_sync_devices = [
             index[mac][0]
             for mac in common_devices_macs
@@ -214,7 +226,9 @@ class BtSyncManager:
             absent_in_needs_sync = set(target_items_macs) - set(needs_sync_macs)
             if len(absent_in_needs_sync) > 0:
                 macs_msg = ", ".join(list(absent_in_needs_sync))
-                raise DeviceNotFoundError(f"Can't push {macs_msg}! Not found or already in sync!")
+                raise DeviceNotFoundError(
+                    f"Can't push {macs_msg}! Not found or already in sync!"
+                )
 
             devices_for_update = []
             for device_mac in target_items_macs:
@@ -224,10 +238,14 @@ class BtSyncManager:
                 device_linux, device_windows = index[device_mac]
 
                 if not device_linux.is_source_linux():
-                    raise DeviceNotFoundError(f"Can't push {device_mac}! Not found on Linux!")
+                    raise DeviceNotFoundError(
+                        f"Can't push {device_mac}! Not found on Linux!"
+                    )
 
                 if device_windows is None:
-                    raise DeviceNotFoundError(f"Can't push {device_mac}! Not found on Windows!")
+                    raise DeviceNotFoundError(
+                        f"Can't push {device_mac}! Not found on Windows!"
+                    )
 
                 device_windows.pairing_key = device_linux.pairing_key
                 devices_for_update.append(device_windows)

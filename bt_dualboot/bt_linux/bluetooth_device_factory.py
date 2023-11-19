@@ -31,12 +31,23 @@ def extract_info(device_info_path):
         hash: Kind of { name:, class:, pairing_key: }
     """
     config = ConfigParser()
-    config.read(device_info_path)
+    config_read_return = config.read(device_info_path)
+
+    try:
+        link_key = config.get("LinkKey", "Key")
+    except:
+        print("No LinkKey for:")
+        print(config_read_return)
+        print(device_info_path)
+        print(config)
+
+        return None
+
     # fmt: off
     return {
         "name":         config.get("General", "Name"),
         "class":        config.get("General", "Class", fallback=None),
-        "pairing_key":  config.get("LinkKey", "Key"),
+        "pairing_key":  link_key,
     }
     # fmt: on
 
@@ -53,6 +64,11 @@ def bluetooth_device_factory(device_info_path):
 
     macs = extract_macs(device_info_path)
     info = extract_info(device_info_path)
+
+    if not info:
+        print("No info for:")
+        print("- {}", device_info_path)
+        return None
 
     return BluetoothDevice(
         source=BluetoothDevice.source_linux(),
